@@ -2,22 +2,34 @@ import React, { useEffect } from 'react'
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap'
-import Message from '../Components/Message'
+import Message from '../components/Message'
+import { addToCart, removeFromCart } from '../actions/cartActions'
 
 const CartScreen = () => {
   const location = useLocation()
+  const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate()
   const productId = params.id
 
-  const qty = location.search ? Number(location.search.split('='))[1] : 1
+  const qty = location.search ? Number(location.search.split('=')[1]) : 1
 
   useEffect(() => {
     if (productId){
-      
+      dispatch(addToCart(productId, qty))
     }
-  })
+  }, [dispatch, productId, qty])
 
+  const cart = useSelector((state) => state.cart)
+  const {cartItems} = cart
+
+  const removeFromCartHandler = (id) => {
+    dispatch(removeFromCart(id))
+  }
+
+  const checkoutHandler = () => {
+    navigate('/login?redirect=shipping')
+  }
   return (
     <Row>
       <Col md={8}>
